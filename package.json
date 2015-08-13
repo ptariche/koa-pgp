@@ -1,0 +1,34 @@
+{
+  "name": "koa-pgp",
+  "version": "0.0.1",
+  "description": "Pretty good middleware privacy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ptariche/koa-pgp.git"
+  },
+  "keywords": [
+    "koa",
+    "pgp",
+    "middleware",
+    "end to end"
+  ],
+  "author": "Peter A. Tariche",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ptariche/koa-pgp/issues"
+  },
+  "homepage": "https://github.com/ptariche/koa-pgp",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "lodash": "^3.10.1",
+    "openpgp": "^1.2.0"
+  },
+  "devDependencies": {
+    "koa": "^0.21.0",
+    "koa-bodyparser": "^2.0.1"
+  }
+}

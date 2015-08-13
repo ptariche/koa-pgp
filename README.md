@@ -1,7 +1,7 @@
 # koa-pgp
   Pretty good middlware privacy 
   
-[![NPM](https://nodei.co/npm/koa-pgp.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/koa-waterline/) [![NPM](https://nodei.co/npm-dl/koa-pgp.png?months=6&height=3)](https://nodei.co/npm/koa-pgp/)
+[![NPM](https://nodei.co/npm/koa-pgp.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/koa-pgp/) [![NPM](https://nodei.co/npm-dl/koa-pgp.png?months=6&height=3)](https://nodei.co/npm/koa-pgp/)
 
 
     npm install koa-pgp

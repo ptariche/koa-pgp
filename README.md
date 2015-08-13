@@ -7,7 +7,7 @@
     npm install koa-pgp
 
 ## Example
-
+      var koaPGP = require('koa-pgp');
       app.use(function *(next){
       console.log('running next step in co-flow');
     
@@ -61,7 +61,13 @@
       yield next;
     });
 
-
+## As Middleware
+    var config = require('yourconfig.json');
+    var koaPGP = require('koa-pgp');
+    app.use(koaPGP.middleware(config.private_key, config.passphrase));
+    
+    //This expects the encrypted message to be sent in the ctx.request.body
+  
 ## Authors
 
   - [Peter A Tariche](https://github.com/ptariche)

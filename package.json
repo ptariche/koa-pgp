@@ -1,6 +1,6 @@
 {
   "name": "koa-pgp",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Pretty good middleware privacy",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "koa": "^0.21.0",
-    "koa-bodyparser": "^2.0.1"
+    "koa-bodyparser-secure": "^3.0.0"
   }
 }

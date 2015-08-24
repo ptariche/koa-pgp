@@ -8,7 +8,7 @@
 
 ## dependencies
 
-  npm install koa-bodyparser-secure
+    npm install koa-bodyparser-secure
 
 ## Example
 
@@ -175,7 +175,17 @@
       };
 
 
+## Further Examples
+   See example.js -- injection arguments will soon be added
+
+## This is a work in progress
+
 ### Want to contribute to this repository? Submit a pull request!
+
+### What's still needed?
+
+    - Tests
+    - A standard to convert PGP Messsages to JSON and so forth
 
 ## Authors
 

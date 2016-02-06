@@ -18,6 +18,8 @@
 
 ## Example
 ```js
+
+'use strict';
 let koaPGP = require('koa-pgp');
 let parser = require('koa-bodyparser-secure');
 
@@ -101,8 +103,8 @@ app.use(function *(next){
 
 
 app.use(function *(next){
-  var ctx               = this;
-  var encrypted_message = yield readFile('./example_files/example.msg');
+  let ctx               = this;
+  let encrypted_message = yield readFile('./example_files/example.msg');
   ctx.request.body      = encrypted_message;
 
   console.log();
@@ -118,10 +120,10 @@ app.use(function *(next){
 
 
 app.use(function *(next){
-  var ctx     = this;
+  let ctx     = this;
   ctx._pgp    = ctx._pgp ? ctx._pgp : yield koaPGP.init;
-  var pk      = yield readFile('./example_files/private.key');
-  var message = yield koaPGP.decrypt(ctx, ctx.request.body, pk, secret);
+  let pk      = yield readFile('./example_files/private.key');
+  let message = yield koaPGP.decrypt(ctx, ctx.request.body, pk, secret);
 
   //setting the body to the decrypted message
 
@@ -147,9 +149,10 @@ app.use(function *(next) {
 ```
 ## As Middleware
 ```js
-var fs           = require('fs');
-var config       = require('./config.js');
-var secureParser = require('koa-bodyparser-secure');
+'use strict';
+let fs           = require('fs');
+let config       = require('./config.js');
+let secureParser = require('koa-bodyparser-secure');
 
 module.exports = function (app, koaPGP){
   fs.readFile('./example_files/private.key', 'utf8', function(err, privkey) {
@@ -169,7 +172,7 @@ module.exports = function (app, koaPGP){
             yield next;
           });
 
-          var injection    = {};
+          let injection    = {};
           injection.status = 200;
           app.use(koaPGP.middleware_out(pubkey, injection))
           app.listen(1988);

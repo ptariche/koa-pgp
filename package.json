@@ -1,6 +1,6 @@
 {
   "name": "koa-pgp",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Pretty good middleware privacy",
   "main": "index.js",
   "scripts": {
@@ -24,8 +24,8 @@
   "homepage": "https://github.com/ptariche/koa-pgp",
   "dependencies": {
     "debug": "^2.2.0",
-    "lodash": "^3.10.1",
-    "openpgp": "^1.2.0"
+    "lodash": "^4.2.1",
+    "openpgp": "^1.5.7"
   },
   "devDependencies": {
     "koa": "^0.21.0",

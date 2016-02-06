@@ -10,10 +10,16 @@
 
     npm install koa-bodyparser-secure
 
+## Middleware Example
+ - Requires a content-type of application/pgp-encrypted with koa-bodyparser-secure installed
+
+ ![Example of POST to Middleware ](example_files/screenshot.png "example")
+
+
 ## Example
 ```js
-var koaPGP = require('koa-pgp');
-var parser = require('koa-bodyparser-secure');
+let koaPGP = require('koa-pgp');
+let parser = require('koa-bodyparser-secure');
 
 app.use(parser());
 
@@ -25,9 +31,9 @@ app.use(function *(next) {
 
 
 
-var createFile = function *(file_name, data) {
+let createFile = function *(file_name, data) {
   return yield function(cb){
-    var file_path = './example_files/' + file_name;
+    let file_path = './example_files/' + file_name;
     fs.writeFile(file_path, data, function(err) {
       if(err) {
         cb(null, false)
@@ -40,7 +46,7 @@ var createFile = function *(file_name, data) {
   }
 };
 
-var readFile = function *(file_path){
+let readFile = function *(file_path){
   return yield function(cb){
     fs.readFile(file_path, 'utf8', function(err, data) {
       if (err) {
@@ -57,28 +63,28 @@ var readFile = function *(file_path){
 app.use(function *(next){
   console.log('running next step in co-flow');
 
-  var ctx  = this;
+  let ctx  = this;
 
   //instantiate the inheritence of openpgp.js
 
   ctx._pgp = ctx._pgp ? ctx._pgp : yield koaPGP.init;
 
   //options argument for openpgp.js https://github.com/openpgpjs/openpgpjs
-  var options = {
+  let options = {
       numBits: 2048,
       userId: 'Jon Smith <jon.smith@example.org>',
       passphrase: secret
   };
 
   //create the keys
-  var keys         = yield koaPGP.createKeys(this._pgp, options);
+  let keys         = yield koaPGP.createKeys(this._pgp, options);
   //console.log(keys);
-  var private_key  = keys.private_key;
-  var public_key   = keys.public_key;
+  let private_key  = keys.private_key;
+  let public_key   = keys.public_key;
 
   // Write files to local example_keys directory
-  var createPKFile = yield createFile('private.key', private_key);
-  var createPubFile= yield createFile('pub.key', public_key);
+  let createPKFile = yield createFile('private.key', private_key);
+  let createPubFile= yield createFile('pub.key', public_key);
 
   // Passing into scope to show example
   // ctx.public_key   = public_key;
@@ -86,8 +92,8 @@ app.use(function *(next){
   // ctx.passphrase   = options.passphrase;
 
   //encrypt the message
-  var message      = yield koaPGP.encrypt(ctx, ctx.request.body, private_key);
-  var createMsg    = yield createFile('example.msg', message);
+  let message      = yield koaPGP.encrypt(ctx, ctx.request.body, private_key);
+  let createMsg    = yield createFile('example.msg', message);
   //setting the body to the encrypted message
 
   yield next;
@@ -178,14 +184,13 @@ module.exports = function (app, koaPGP){
 ## Further Examples
    See example.js -- injection arguments will soon be added
 
-## This is a work in progress
 
 ### Want to contribute to this repository? Submit a pull request!
 
 ### What's still needed?
 
     - Tests
-    - A standard to convert PGP Messsages to JSON and so forth
+    - A standard to convert PGP messsages to JSON and so forth
 
 ## Authors
 

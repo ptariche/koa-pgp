@@ -1,29 +1,35 @@
-var fs           = require('fs');
-var config       = require('./config.js');
-var secureParser = require('koa-bodyparser-secure');
+'use strict';
 
-module.exports = function (app, koaPGP){
-  fs.readFile('./example_files/private.key', 'utf8', function(err, privkey) {
+let fs           = require('fs');
+const CONFIG     = require('./config.js');
+let secureParser = require('koa-bodyparser-secure');
+
+
+// content-type of application/pgp-encrypted
+
+module.exports = function (APP, koaPGP) {
+  fs.readFile('./example_files/private.key', 'utf8', function (err, privkey) {
     if (err) {
       throw err;
     } else {
-      fs.readFile('./example_files/pub.key', 'utf8', function(err, pubkey) {
+      fs.readFile('./example_files/pub.key', 'utf8', function (err, pubkey) {
         if (err) {
           throw err;
         } else {
           // Header required of application/pgp-encrypted
-          app.use(secureParser());
-          app.use(koaPGP.middleware(privkey, config.secret));
+          APP.use(secureParser());
+          APP.use(koaPGP.middleware(privkey, CONFIG.secret));
 
-          app.use(function *(next) {
+          APP.use(function *(next) {
             console.log(this.request.body);
             yield next;
           });
 
-          var injection    = {};
+          let injection    = {};
           injection.status = 200;
-          app.use(koaPGP.middleware_out(pubkey, injection))
-          app.listen(1988);
+          APP.use(koaPGP.middleware_out(pubkey, injection));
+          APP.listen(1988);
+          console.log('Starting Koa-PGP Middleware example on port:', 1988);
         }
       });
 

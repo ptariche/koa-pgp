@@ -15,6 +15,11 @@
 
  ![Example of POST to Middleware ](example_files/screenshot.png "example")
 
+ ## Advance Middleware Example
+  - Requires a content-type of application/pgp-encrypted with koa-bodyparser-secure installed
+  - Requires a PGP-Identifier
+
+  ![Example of POST to Middleware ](example_files/screenshot2.png "example")
 
 ## Basic Example
 ```js

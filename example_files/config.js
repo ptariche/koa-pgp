@@ -2,5 +2,6 @@
 
 let config = {};
 
-config.secret      = 'super long and hard to guess secret';
+config.secret      = 'Test1234';
+config.port        = 1988;
 module.exports     = config;

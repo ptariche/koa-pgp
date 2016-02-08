@@ -10,13 +10,13 @@
 
     npm install koa-bodyparser-secure
 
-## Middleware Example
+## Basic Middleware Example
  - Requires a content-type of application/pgp-encrypted with koa-bodyparser-secure installed
 
  ![Example of POST to Middleware ](example_files/screenshot.png "example")
 
 
-## Example
+## Basic Example
 ```js
 
 'use strict';
@@ -152,11 +152,12 @@ APP.use(function *(next) {
 APP.listen(1988);
 
 ```
-## As Middleware
+## As Basic Middleware
 ```js
 'use strict';
+const CONFIG     = require('./config');
+
 let fs           = require('fs');
-let config       = require('./config.js');
 let secureParser = require('koa-bodyparser-secure');
 
 module.exports = function (app, koaPGP){
@@ -189,16 +190,90 @@ module.exports = function (app, koaPGP){
 };
 ```
 
+## Advance Middleware
+```js
+'use strict';
+
+const CONFIG     = require('./config');
+
+let fs           = require('fs');
+let secureParser = require('koa-bodyparser-secure');
+
+
+// requires a content-type of application/pgp-encrypted
+
+module.exports = function (APP, koaPGP) {
+  let retrievePrivateKey = function () {
+    return new Promise(function (resolve, reject) {
+      try {
+        fs.readFile('./example_files/private.key', 'utf8', function (err, privkey) {
+          if (err) {
+            throw err;
+          } else {
+            resolve(privkey);
+          }
+        });
+      } catch (err) {
+        console.error(err.stack);
+        resolve(false);
+      }
+    });
+  };
+
+  // Header required of application/pgp-encrypted
+  APP.use( secureParser() );
+  APP.use(function *(next) {
+    let ctx              = this;
+    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init;
+    ctx._pgp._privateKey = ctx._pgp._privateKey ? ctx._pgp._privateKey : yield retrievePrivateKey;
+    ctx._pgp._passphrase = ctx._pgp._passphrase ? ctx._pgp._passphrase : CONFIG.secret;
+    yield next;
+  });
+
+  APP.use ( koaPGP.middleware_lookup_pubkey() );
+  APP.use( koaPGP.middleware() );
+
+  APP.use(function *(next) {
+    console.log(this.request.body);
+    yield next;
+  });
+
+  // let injection    = {};
+  // injection.status = 200;
+
+  APP.use( koaPGP.middleware_out() );
+
+  APP.listen(CONFIG.port);
+
+  console.log('Starting Koa-PGP Middleware example on port:', CONFIG.port);
+
+};
+
+```
+
 ## Further Examples
    See example.js -- injection arguments will soon be added
 
 
-### Want to contribute to this repository? Submit a pull request!
+## Functions
+  [middleware](#middleware)
+
+  - middleware(private_key, passphrase, injection)
+  - middleware_out(public_key, injection)
+  - middleware_lookup_pubkey(options, promiseFunction)
+    - options: header_key, hkp_server
+    - Defaults hkp_server to lookup Public Key at pgp.mit.edu
+    - Defaults header_key to 'PGP-Identifier' as header parameter expected
+  - middleware_injection(promiseFunction)
+
+*Want to contribute to this repository? Submit a pull request!*
 
 ### What's still needed?
+  - Unit Tests
+  - A standard to convert PGP messsages to JSON
 
-    - Tests
-    - A standard to convert PGP messsages to JSON and so forth
+## Full Examples
+  - <
 
 ## Authors
 

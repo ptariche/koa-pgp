@@ -147,4 +147,6 @@ APP.listen(1988);
 
 // Header required of application/pgp-encrypted and npm install koa-bodyparser-secure
 
-require('./example_files/middleware.js')(APP, koaPGP);
+//require('./example_files/middleware_basic.js')(APP, koaPGP);
+
+require('./example_files/middleware_advanced')(APP, koaPGP);

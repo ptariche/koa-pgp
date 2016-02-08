@@ -128,7 +128,7 @@ APP.use(function *(next) {
 
 APP.use(function *(next) {
   let ctx     = this;
-  ctx._pgp    = ctx._pgp ? ctx._pgp : yield koaPGP.init;
+  ctx._pgp    = ctx._pgp ? ctx._pgp : yield koaPGP.init();
   let pk      = yield readFile('./example_files/private.key');
   let message = yield koaPGP.decrypt(ctx, ctx.request.body, pk, secret);
 
@@ -232,7 +232,7 @@ module.exports = function (APP, koaPGP) {
   APP.use(function *(next) {
 
     let ctx              = this;
-    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init;
+    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init();
     ctx._pgp._privateKey = ctx._pgp._privateKey ? ctx._pgp._privateKey : yield retrievePrivateKey();
     ctx._pgp._passphrase = ctx._pgp._passphrase ? ctx._pgp._passphrase : CONFIG.secret;
 

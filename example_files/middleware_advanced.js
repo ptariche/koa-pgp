@@ -51,7 +51,7 @@ module.exports = function (APP, koaPGP) {
   APP.use(function *(next) {
 
     let ctx              = this;
-    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init;
+    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init();
     ctx._pgp._privateKey = ctx._pgp._privateKey ? ctx._pgp._privateKey : yield retrievePrivateKey();
     //ctx._pgp._publicKey  = ctx._pgp._publicKey  ? ctx._pgp._publicKey  : yield retrievePublicKey();
     ctx._pgp._passphrase = ctx._pgp._passphrase ? ctx._pgp._passphrase : CONFIG.secret;

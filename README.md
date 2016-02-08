@@ -279,7 +279,7 @@ module.exports = function (APP, koaPGP) {
   - A standard to convert PGP messsages to JSON
 
 ## Full Examples
-  - <
+  - TBA
 
 ## Authors
 

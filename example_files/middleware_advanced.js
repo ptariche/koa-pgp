@@ -26,6 +26,24 @@ module.exports = function (APP, koaPGP) {
     });
   };
 
+  let retrievePublicKey = function () {
+    return new Promise(function (resolve, reject) {
+      try {
+        fs.readFile('./example_files/example2_ciph_pub.key', 'utf8', function (err, privkey) {
+          if (err) {
+            throw err;
+          } else {
+            resolve(privkey);
+          }
+        });
+      } catch (err) {
+        console.error(err.stack);
+        resolve(false);
+      }
+    });
+  };
+
+
   // Header Content-Type required of application/pgp-encrypted
   // Header PGP-Identifier required
 
@@ -35,6 +53,7 @@ module.exports = function (APP, koaPGP) {
     let ctx              = this;
     ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init;
     ctx._pgp._privateKey = ctx._pgp._privateKey ? ctx._pgp._privateKey : yield retrievePrivateKey();
+    //ctx._pgp._publicKey  = ctx._pgp._publicKey  ? ctx._pgp._publicKey  : yield retrievePublicKey();
     ctx._pgp._passphrase = ctx._pgp._passphrase ? ctx._pgp._passphrase : CONFIG.secret;
 
     yield next;

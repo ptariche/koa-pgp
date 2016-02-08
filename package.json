@@ -1,6 +1,6 @@
 {
   "name": "koa-pgp",
-  "version": "2.0.1",
+  "version": "2.5.0",
   "description": "Pretty good middleware privacy",
   "main": "index.js",
   "scripts": {

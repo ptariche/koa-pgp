@@ -1,18 +1,17 @@
 'use strict';
 
-const CONFIG     = require('./config');
-
-let fs           = require('fs');
-let secureParser = require('koa-bodyparser-secure');
+const CONFIG       = require('./config');
+const FS           = require('fs');
+const SECUREPARSER = require('koa-bodyparser-secure');
 
 
 // requires a content-type of application/pgp-encrypted
 
-module.exports = function (APP, koaPGP) {
+module.exports = function (APP, KOAPGP) {
   let retrievePrivateKey = function () {
     return new Promise(function (resolve, reject) {
       try {
-        fs.readFile('./example_files/server_example_pk.key', 'utf8', function (err, privkey) {
+        FS.readFile('./example_files/server_example_pk.key', 'utf8', function (err, privkey) {
           if (err) {
             throw err;
           } else {
@@ -29,7 +28,7 @@ module.exports = function (APP, koaPGP) {
   let retrievePublicKey = function () {
     return new Promise(function (resolve, reject) {
       try {
-        fs.readFile('./example_files/example2_ciph_pub.key', 'utf8', function (err, privkey) {
+        FS.readFile('./example_files/example2_ciph_pub.key', 'utf8', function (err, privkey) {
           if (err) {
             throw err;
           } else {
@@ -47,11 +46,11 @@ module.exports = function (APP, koaPGP) {
   // Header Content-Type required of application/pgp-encrypted
   // Header PGP-Identifier required
 
-  APP.use( secureParser() );
-  APP.use(function *(next) {
+  APP.use( SECUREPARSER() );
+  APP.use(function * (next) {
 
     let ctx              = this;
-    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init();
+    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield KOAPGP.init();
     ctx._pgp._privateKey = ctx._pgp._privateKey ? ctx._pgp._privateKey : yield retrievePrivateKey();
     //ctx._pgp._publicKey  = ctx._pgp._publicKey  ? ctx._pgp._publicKey  : yield retrievePublicKey();
     ctx._pgp._passphrase = ctx._pgp._passphrase ? ctx._pgp._passphrase : CONFIG.secret;
@@ -59,10 +58,10 @@ module.exports = function (APP, koaPGP) {
     yield next;
   });
 
-  APP.use ( koaPGP.middleware_lookup_pubkey() ); // Lookups up the key with a designated key server; it's default is set to pgp.mit.edu
-  APP.use( koaPGP.middleware() );
+  APP.use ( KOAPGP.middleware_lookup_pubkey() ); // Lookups up the key with a designated key server; it's default is set to pgp.mit.edu
+  APP.use( KOAPGP.middleware() );
 
-  APP.use(function *(next) {
+  APP.use(function * (next) {
     console.log('decrypted body:', this.request.body);
     this.response.body = { message: 'super secret, wow', code: 200, success: true };
     console.log('secret reply:', this.response.body);
@@ -72,7 +71,7 @@ module.exports = function (APP, koaPGP) {
   let injection    = {};
   injection.status = 200;
 
-  APP.use( koaPGP.middleware_out(null, injection) );
+  APP.use( KOAPGP.middleware_out(null, injection) );
 
   APP.listen(CONFIG.port);
 

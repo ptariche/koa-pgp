@@ -1,7 +1,7 @@
 'use strict';
 
-let config = {};
+const CONFIG = {};
 
-config.secret      = 'Test1234';
-config.port        = 1988;
-module.exports     = config;
+CONFIG.secret  = 'Test1234';
+CONFIG.port    = 1988;
+module.exports = CONFIG;

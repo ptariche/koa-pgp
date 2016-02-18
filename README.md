@@ -25,12 +25,12 @@
 ```js
 
 'use strict';
-const APP  = require('koa');
-let fs     = require('fs');
-let koaPGP = require('koa-pgp');
-let parser = require('koa-bodyparser-secure');
+const APP    = require('koa');
+const FS     = require('fs');
+const KOAPGP = require('koa-pgp');
+const PARSER = require('koa-bodyparser-secure');
 
-APP.use(parser());
+APP.use(PARSER());
 
 APP.use(function *(next) {
   this.request.body = ':: koa-pgp: starting example ::';
@@ -43,7 +43,7 @@ APP.use(function *(next) {
 let createFile = function (file_name, data) {
   return new Promise( function (resolve,reject) {
     let file_path = './example_files/' + file_name;
-    fs.writeFile(file_path, data, function (err) {
+    FS.writeFile(file_path, data, function (err) {
       if (err) {
         resolve(false);
         return console.log(err);
@@ -57,7 +57,7 @@ let createFile = function (file_name, data) {
 
 let readFile = function (file_path) {
   return new Promise( function (resolve, reject) {
-    fs.readFile(file_path, 'utf8', function (err, data) {
+    FS.readFile(file_path, 'utf8', function (err, data) {
       if (err) {
         throw err;
         resolve(false);
@@ -76,7 +76,7 @@ APP.use(function *(next) {
 
   //instantiate the inheritence of openpgp.js
 
-  ctx._pgp = ctx._pgp ? ctx._pgp : yield koaPGP.init;
+  ctx._pgp = ctx._pgp ? ctx._pgp : yield KOAPGP.init;
 
   //options argument for openpgp.js https://github.com/openpgpjs/openpgpjs
   let options = {
@@ -86,7 +86,7 @@ APP.use(function *(next) {
   };
 
   //create the keys
-  let keys         = yield koaPGP.createKeys(this._pgp, options);
+  let keys         = yield KOAPGP.createKeys(this._pgp, options);
   //console.log(keys);
   let private_key  = keys.private_key;
   let public_key   = keys.public_key;
@@ -101,7 +101,7 @@ APP.use(function *(next) {
   // ctx.passphrase   = options.passphrase;
 
   //encrypt the message
-  let message      = yield koaPGP.encrypt(ctx, ctx.request.body, private_key);
+  let message      = yield KOAPGP.encrypt(ctx, ctx.request.body, private_key);
   let createMsg    = yield createFile('example.msg', message);
   //setting the body to the encrypted message
 
@@ -128,9 +128,9 @@ APP.use(function *(next) {
 
 APP.use(function *(next) {
   let ctx     = this;
-  ctx._pgp    = ctx._pgp ? ctx._pgp : yield koaPGP.init();
+  ctx._pgp    = ctx._pgp ? ctx._pgp : yield KOAPGP.init();
   let pk      = yield readFile('./example_files/private.key');
-  let message = yield koaPGP.decrypt(ctx, ctx.request.body, pk, secret);
+  let message = yield KOAPGP.decrypt(ctx, ctx.request.body, pk, secret);
 
   //setting the body to the decrypted message
 
@@ -162,21 +162,21 @@ APP.listen(1988);
 'use strict';
 const CONFIG     = require('./config');
 
-let fs           = require('fs');
-let secureParser = require('koa-bodyparser-secure');
+let FS           = require('fs');
+let SECUREPARSER = require('koa-bodyparser-secure');
 
-module.exports = function (app, koaPGP){
-  fs.readFile('./example_files/private.key', 'utf8', function(err, privkey) {
+module.exports = function (app, KOAPGP){
+  FS.readFile('./example_files/private.key', 'utf8', function(err, privkey) {
     if (err) {
       throw err;
     } else {
-      fs.readFile('./example_files/pub.key', 'utf8', function(err, pubkey) {
+      FS.readFile('./example_files/pub.key', 'utf8', function(err, pubkey) {
         if (err) {
           throw err;
         } else {
           // Header required of application/pgp-encrypted
-          app.use(secureParser());
-          app.use(koaPGP.middleware(privkey, config.secret));
+          app.use(SECUREPARSER());
+          app.use(KOAPGP.middleware(privkey, CONFIG.secret));
 
           app.use(function *(next) {
             console.log(this.request.body);
@@ -185,7 +185,7 @@ module.exports = function (app, koaPGP){
 
           let injection    = {};
           injection.status = 200;
-          app.use(koaPGP.middleware_out(pubkey, injection))
+          app.use(KOAPGP.middleware_out(pubkey, injection))
           app.listen(1988);
         }
       });
@@ -201,17 +201,17 @@ module.exports = function (app, koaPGP){
 
 const CONFIG     = require('./config');
 
-let fs           = require('fs');
-let secureParser = require('koa-bodyparser-secure');
+let FS           = require('fs');
+let SECUREPARSER = require('koa-bodyparser-secure');
 
 
 // requires a content-type of application/pgp-encrypted
 
-module.exports = function (APP, koaPGP) {
+module.exports = function (APP, KOAPGP) {
   let retrievePrivateKey = function () {
     return new Promise(function (resolve, reject) {
       try {
-        fs.readFile('./example_files/server_example_pk.key', 'utf8', function (err, privkey) {
+        FS.readFile('./example_files/server_example_pk.key', 'utf8', function (err, privkey) {
           if (err) {
             throw err;
           } else {
@@ -228,19 +228,19 @@ module.exports = function (APP, koaPGP) {
   // Header Content-Type required of application/pgp-encrypted
   // Header PGP-Identifier required
 
-  APP.use( secureParser() );
+  APP.use( SECUREPARSER() );
   APP.use(function *(next) {
 
     let ctx              = this;
-    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield koaPGP.init();
+    ctx._pgp             = ctx._pgp             ? ctx._pgp             : yield KOAPGP.init();
     ctx._pgp._privateKey = ctx._pgp._privateKey ? ctx._pgp._privateKey : yield retrievePrivateKey();
     ctx._pgp._passphrase = ctx._pgp._passphrase ? ctx._pgp._passphrase : CONFIG.secret;
 
     yield next;
   });
 
-  APP.use ( koaPGP.middleware_lookup_pubkey() ); // Lookups up the key with a designated key server; it's default is set to pgp.mit.edu
-  APP.use( koaPGP.middleware() );
+  APP.use ( KOAPGP.middleware_lookup_pubkey() ); // Lookups up the key with a designated key server; it's default is set to pgp.mit.edu
+  APP.use( KOAPGP.middleware() );
 
   APP.use(function *(next) {
     console.log('decrypted body:', this.request.body);
@@ -252,7 +252,7 @@ module.exports = function (APP, koaPGP) {
   let injection    = {};
   injection.status = 200;
 
-  APP.use( koaPGP.middleware_out(null, injection) );
+  APP.use( KOAPGP.middleware_out(null, injection) );
 
   APP.listen(CONFIG.port);
 

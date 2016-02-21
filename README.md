@@ -162,8 +162,8 @@ APP.listen(1988);
 'use strict';
 const CONFIG     = require('./config');
 
-let FS           = require('fs');
-let SECUREPARSER = require('koa-bodyparser-secure');
+const FS           = require('fs');
+const SECUREPARSER = require('koa-bodyparser-secure');
 
 module.exports = function (app, KOAPGP){
   FS.readFile('./example_files/private.key', 'utf8', function(err, privkey) {
@@ -201,8 +201,8 @@ module.exports = function (app, KOAPGP){
 
 const CONFIG     = require('./config');
 
-let FS           = require('fs');
-let SECUREPARSER = require('koa-bodyparser-secure');
+const FS           = require('fs');
+const SECUREPARSER = require('koa-bodyparser-secure');
 
 
 // requires a content-type of application/pgp-encrypted
